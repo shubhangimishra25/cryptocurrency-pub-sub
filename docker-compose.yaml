@@ -1,12 +1,17 @@
 version: "3.9"
 services:
   mongodb:
-    image: 'mongo'
+    image: 'smish12/distributed_phase_1_database'
     volumes:
       - data:/data/db
-    env_file:
-      - ./env/mongo.env
+    # env_file:
+    #   - ./env/mongo.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
   backend:
+    image: 'smish12/distributed_phase_1_backend'
     build: './backend'
     ports:
       - '80:80'  
@@ -17,6 +22,8 @@ services:
     depends_on:
       - mongodb
   frontend:
+    image: 'smish12/distributed_phase_1_frontend'
+    
     build: './frontend'
     ports:
       - '3000:3000'  
