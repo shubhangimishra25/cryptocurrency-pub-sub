@@ -7,6 +7,7 @@ The first folder backend contains the server-side code of the application and ha
 
 I have used volumes and bind-mount concept to persist the data on server-side on logs folder and it connects to my frontend application through port no 80 and it uses authentication before writing on mongo DB
 I have assigned this container to a network that is in the same network as my Mongo DB is henceforth there is no need to use the network
+For the source code live update that is you don’t have to build the restart the container again and again I have added a dependency of nodemon which helps with that
 you have to run the following command example if you want to create a container on a network
 #### Example
 ``` bash 
