@@ -42,9 +42,8 @@ Docker-compose helps to minimize the commands we have to run while maintaining o
 #### NOTE 
 You don't have to mention the network as docker-compose builds a default network and attaches our file ip accordingly
 
-# COMMAND
+#### COMMAND
 You just have to type in this command for initializing the app
-```
-bash
+```bash
 docker-compose up
 ```
