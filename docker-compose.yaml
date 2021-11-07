@@ -1,7 +1,8 @@
 version: "3.9"
 services:
   mongodb:
-    image: 'smish12/distributed_phase_1_database'
+    image: 'mongo'
+    restart: always
     volumes:
       - data:/data/db
     # env_file:
@@ -9,21 +10,73 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+   
+  mongo-express:
+    image: 'mongo-express'
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+    restart: unless-stopped
+    depends_on:
+      - mongodb
 
-  backend:
-    image: 'smish12/distributed_phase_1_backend'
-    build: './backend'
+  mainbroker:
+    container_name:
+       mainbroker
+    build: './mainbroker'
+    ports:
+      - '8084:8084'  
+    volumes:
+      - logs:/app/logs 
+      - ./mainbroker:/app 
+      - /app/node_modules
+    depends_on:
+      - mongodb  
+  broker1:
+    container_name:
+       broker1
+    build: './broker1'
     ports:
       - '80:80'  
     volumes:
       - logs:/app/logs 
-      - ./backend:/app 
+      - ./broker1:/app 
+      - /app/node_modules
+    depends_on:
+      - mongodb  
+  broker2:
+    container_name: broker2
+    build: './broker2'
+    ports:
+      - '82:82'  
+    volumes:
+      - logs:/app/logs 
+      - ./broker2:/app 
+      - /app/node_modules
+    depends_on:
+      - mongodb  
+  broker3:
+    container_name: broker3
+    build: './broker3'
+    ports:
+      - '83:83'  
+    volumes:
+      - logs:/app/logs 
+      - ./broker3:/app 
       - /app/node_modules
     depends_on:
       - mongodb
   frontend:
+
     image: 'smish12/distributed_phase_1_frontend'
-    
+    stdin_open: true
+    tty: true
     build: './frontend'
     ports:
       - '3000:3000'  
@@ -32,11 +85,23 @@ services:
       - ./frontend/src:/app /src
       - /app/node_modules
     depends_on:
-      - backend
-    stdin_open: true
-    tty: true
+      - broker1
+      - broker2
+      - broker3
+      - mainbroker
+  publisher:
+    
+    build: './pubsub/publisher'
+    ports:
+      - '3005:3005'     
+    depends_on:
+      - broker1
+      - broker2
+      - broker3
+      - mainbroker
+      
 
-  
+
 volumes:
   data:
   logs:

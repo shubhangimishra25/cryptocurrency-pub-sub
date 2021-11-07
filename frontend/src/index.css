@@ -30,8 +30,26 @@ input {
   text-align: center;
   color: #242424;
 }
+select {
+  font: inherit;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  font-size: 1.5rem;
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 30px;
+  text-align: center;
+  color: #242424;
+}
 
 input:focus {
+  outline: none;
+  border-color: #010c18;
+  background-color: #ecf8fa;
+}
+
+select:focus {
   outline: none;
   border-color: #010c18;
   background-color: #ecf8fa;
